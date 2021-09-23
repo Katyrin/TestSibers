@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.katyrin.testsibers.databinding.ItemPokemonBinding
 import com.katyrin.testsibers.model.entities.Pokemon
+import com.squareup.picasso.Picasso
 
 class HomeAdapter : PagingDataAdapter<Pokemon, HomeAdapter.HomeViewHolder>(DiffUtilCallBack) {
 
@@ -23,6 +24,8 @@ class HomeAdapter : PagingDataAdapter<Pokemon, HomeAdapter.HomeViewHolder>(DiffU
     ) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(pokemon: Pokemon) {
             itemBinding.nameTextView.text = pokemon.name
+            val image = BASE_URL + pokemon.url + PNG
+            Picasso.get().load(image).into(itemBinding.previewImage)
         }
     }
 
@@ -34,4 +37,10 @@ class HomeAdapter : PagingDataAdapter<Pokemon, HomeAdapter.HomeViewHolder>(DiffU
         HomeViewHolder(
             ItemPokemonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
+
+    private companion object {
+        const val BASE_URL =
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"
+        const val PNG = ".png"
+    }
 }
