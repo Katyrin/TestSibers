@@ -10,7 +10,7 @@ import androidx.navigation.Navigation
 import androidx.paging.PagingData
 import com.katyrin.testsibers.R
 import com.katyrin.testsibers.databinding.FragmentHomeBinding
-import com.katyrin.testsibers.model.entities.Pokemon
+import com.katyrin.testsibers.model.entities.PokemonDTO
 import com.katyrin.testsibers.utils.toast
 import com.katyrin.testsibers.view.adapter.HomeAdapter
 import com.katyrin.testsibers.viewmodel.AppState
@@ -35,13 +35,21 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(requireActivity(), R.id.main_container)
         viewModel.liveData.observe(viewLifecycleOwner) { renderData(it) }
-        binding?.recyclerView?.adapter = HomeAdapter()
         viewModel.getListPokemon()
+        initAdapter()
+    }
+
+    private fun initAdapter() {
+        binding?.recyclerView?.adapter = HomeAdapter { pokemonDTO ->
+            navController?.navigate(
+                HomeFragmentDirections.actionHomeFragmentToInfoFragment(pokemonDTO)
+            )
+        }
     }
 
     private fun renderData(appState: AppState) {
         when (appState) {
-            is AppState.Success -> updateList(appState.pokemonList)
+            is AppState.Success -> updateList(appState.pokemonDTOList)
             is AppState.Error -> setErrorState(appState.errorState)
         }
     }
@@ -56,16 +64,12 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun updateList(pokemonList: PagingData<Pokemon>): Unit =
-        (binding?.recyclerView?.adapter as HomeAdapter).submitData(lifecycle, pokemonList)
+    private fun updateList(pokemonDTOList: PagingData<PokemonDTO>): Unit =
+        (binding?.recyclerView?.adapter as HomeAdapter).submitData(lifecycle, pokemonDTOList)
 
     override fun onDestroyView() {
         binding = null
         navController = null
         super.onDestroyView()
-    }
-
-    companion object {
-        fun newInstance() = HomeFragment()
     }
 }

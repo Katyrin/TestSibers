@@ -1,8 +1,8 @@
 package com.katyrin.testsibers.model.mapping
 
-import com.katyrin.testsibers.model.entities.PagingDTO
-import com.katyrin.testsibers.model.entities.pokemonDTO.NamedApiResourceList
+import com.katyrin.testsibers.model.entities.PokemonDTO
+import com.katyrin.testsibers.model.entities.pokemonDTO.Pokemon
 
 interface PokemonMapping {
-    fun mapResponseDataToPagingDTO(namedApiResourceList: NamedApiResourceList): PagingDTO
+    fun mapPokemonToPokemonDTO(pokemon: Pokemon): PokemonDTO
 }

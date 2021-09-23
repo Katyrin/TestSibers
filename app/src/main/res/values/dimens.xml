@@ -6,5 +6,6 @@
     <dimen name="size_preview_image">60dp</dimen>
 
     <dimen name="text_size_normal">24sp</dimen>
+    <dimen name="text_size_header">32sp</dimen>
 
 </resources>

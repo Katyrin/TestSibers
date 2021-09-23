@@ -1,24 +1,28 @@
 package com.katyrin.testsibers.model.mapping
 
-import com.katyrin.testsibers.model.entities.PagingDTO
-import com.katyrin.testsibers.model.entities.Pokemon
-import com.katyrin.testsibers.model.entities.pokemonDTO.NamedApiResourceList
+import com.katyrin.testsibers.model.entities.PokemonDTO
+import com.katyrin.testsibers.model.entities.pokemonDTO.Pokemon
 
 class PokemonMappingImpl : PokemonMapping {
 
-    override fun mapResponseDataToPagingDTO(namedApiResourceList: NamedApiResourceList): PagingDTO {
-        val pokemonList: MutableList<Pokemon> = mutableListOf()
-        namedApiResourceList.results.forEach { namedApiResource ->
-            pokemonList.add(Pokemon(namedApiResource.name, getPokemonNumber(namedApiResource.url)))
-        }
-        return PagingDTO(namedApiResourceList.next, namedApiResourceList.previous, pokemonList)
+    override fun mapPokemonToPokemonDTO(pokemon: Pokemon): PokemonDTO = with(pokemon) {
+        val typeList: MutableList<String> = mutableListOf()
+        types.forEach { typeList.add(it.type.name) }
+        PokemonDTO(
+            name,
+            height,
+            weight,
+            typeList,
+            stats[ATTACK].baseStat,
+            stats[DEFENCE].baseStat,
+            stats[HP].baseStat,
+            sprites.frontDefault
+        )
     }
 
-    private fun getPokemonNumber(url: String): String =
-        with(url.split(DELIMITER)) { get(size - TWO_POSITIONS) }
-
     private companion object {
-        const val DELIMITER = "/"
-        const val TWO_POSITIONS = 2
+        const val HP = 0
+        const val ATTACK = 1
+        const val DEFENCE = 2
     }
 }

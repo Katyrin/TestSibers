@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import com.katyrin.testsibers.model.entities.Pokemon
+import com.katyrin.testsibers.model.entities.PokemonDTO
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -14,7 +14,7 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-class HomeViewModel(private val pagingSource: PagingSource<Int, Pokemon>) : ViewModel() {
+class HomeViewModel(private val pagingSource: PagingSource<Int, PokemonDTO>) : ViewModel() {
 
     private val _mutableLiveData: MutableLiveData<AppState> = MutableLiveData()
     val liveData: LiveData<AppState>
@@ -36,7 +36,7 @@ class HomeViewModel(private val pagingSource: PagingSource<Int, Pokemon>) : View
         }
     }
 
-    private val pokemonListFlow: Flow<PagingData<Pokemon>> = Pager(
+    private val pokemonDTOListFlow: Flow<PagingData<PokemonDTO>> = Pager(
         config = PagingConfig(pageSize = 30, prefetchDistance = 5),
         pagingSourceFactory = { pagingSource }
     ).flow.cachedIn(viewModelScope)
@@ -44,7 +44,7 @@ class HomeViewModel(private val pagingSource: PagingSource<Int, Pokemon>) : View
     fun getListPokemon() {
         cancelJob()
         viewModelCoroutineScope.launch {
-            pokemonListFlow.collectLatest { pokemonList ->
+            pokemonDTOListFlow.collectLatest { pokemonList ->
                 _mutableLiveData.value = AppState.Success(pokemonList)
             }
         }

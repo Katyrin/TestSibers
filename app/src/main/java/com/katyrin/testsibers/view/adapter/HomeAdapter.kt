@@ -6,26 +6,28 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.katyrin.testsibers.databinding.ItemPokemonBinding
-import com.katyrin.testsibers.model.entities.Pokemon
-import com.squareup.picasso.Picasso
+import com.katyrin.testsibers.model.entities.PokemonDTO
+import com.katyrin.testsibers.utils.loadPokemonImage
 
-class HomeAdapter : PagingDataAdapter<Pokemon, HomeAdapter.HomeViewHolder>(DiffUtilCallBack) {
+class HomeAdapter(
+    private val onClick: (PokemonDTO) -> Unit
+) : PagingDataAdapter<PokemonDTO, HomeAdapter.HomeViewHolder>(DiffUtilCallBack) {
 
-    private object DiffUtilCallBack : DiffUtil.ItemCallback<Pokemon>() {
-        override fun areItemsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean =
+    private object DiffUtilCallBack : DiffUtil.ItemCallback<PokemonDTO>() {
+        override fun areItemsTheSame(oldItem: PokemonDTO, newItem: PokemonDTO): Boolean =
             oldItem.name == newItem.name
 
-        override fun areContentsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean =
+        override fun areContentsTheSame(oldItem: PokemonDTO, newItem: PokemonDTO): Boolean =
             oldItem == newItem
     }
 
     inner class HomeViewHolder(
         private val itemBinding: ItemPokemonBinding
     ) : RecyclerView.ViewHolder(itemBinding.root) {
-        fun bind(pokemon: Pokemon) {
-            itemBinding.nameTextView.text = pokemon.name
-            val image = BASE_URL + pokemon.pokemonNumber + PNG
-            Picasso.get().load(image).into(itemBinding.previewImage)
+        fun bind(pokemonDTO: PokemonDTO) {
+            itemBinding.nameTextView.text = pokemonDTO.name
+            itemBinding.previewImage.loadPokemonImage(pokemonDTO.imageUrl)
+            itemBinding.root.setOnClickListener { onClick(pokemonDTO) }
         }
     }
 
@@ -37,10 +39,4 @@ class HomeAdapter : PagingDataAdapter<Pokemon, HomeAdapter.HomeViewHolder>(DiffU
         HomeViewHolder(
             ItemPokemonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
-
-    private companion object {
-        const val BASE_URL =
-            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"
-        const val PNG = ".png"
-    }
 }

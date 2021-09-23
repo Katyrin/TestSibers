@@ -4,4 +4,10 @@
     <string name="unknown_host_error_message">Unable to make a connection, please check your internet</string>
     <string name="connection_error_message">Connection shutdown. Please check your internet</string>
     <string name="server_error_message">Server is unreachable, please try again later</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="type">Type</string>
+    <string name="attack">Attack</string>
+    <string name="defense">Defense</string>
+    <string name="hp">HP</string>
 </resources>
