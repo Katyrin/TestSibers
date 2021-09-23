@@ -24,7 +24,7 @@ class HomeAdapter : PagingDataAdapter<Pokemon, HomeAdapter.HomeViewHolder>(DiffU
     ) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(pokemon: Pokemon) {
             itemBinding.nameTextView.text = pokemon.name
-            val image = BASE_URL + pokemon.url + PNG
+            val image = BASE_URL + pokemon.pokemonNumber + PNG
             Picasso.get().load(image).into(itemBinding.previewImage)
         }
     }
