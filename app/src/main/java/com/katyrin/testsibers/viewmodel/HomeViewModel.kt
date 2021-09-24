@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.katyrin.testsibers.model.entities.PokemonDTO
+import com.katyrin.testsibers.model.paging.PokemonPagingSource
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -36,18 +37,29 @@ class HomeViewModel(private val pagingSource: PagingSource<Int, PokemonDTO>) : V
         }
     }
 
-    private val pokemonDTOListFlow: Flow<PagingData<PokemonDTO>> = Pager(
-        config = PagingConfig(pageSize = 30, prefetchDistance = 5),
-        pagingSourceFactory = { pagingSource }
-    ).flow.cachedIn(viewModelScope)
+    private fun pokemonDTOListFlow(): Flow<PagingData<PokemonDTO>> =
+        Pager(
+            config = PagingConfig(pageSize = 30, prefetchDistance = 5),
+            pagingSourceFactory = { pagingSource }
+        ).flow.cachedIn(viewModelScope)
 
-    fun getListPokemon() {
+    private fun getListPokemon() {
+        _mutableLiveData.value = AppState.Loading
         cancelJob()
         viewModelCoroutineScope.launch {
-            pokemonDTOListFlow.collectLatest { pokemonList ->
+            pokemonDTOListFlow().collectLatest { pokemonList ->
                 _mutableLiveData.value = AppState.Success(pokemonList)
             }
         }
+    }
+
+    fun randomStart() {
+        if (pagingSource is PokemonPagingSource) pagingSource.isRandom = true
+        getListPokemon()
+    }
+
+    init {
+        getListPokemon()
     }
 
     private fun cancelJob() {

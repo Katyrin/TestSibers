@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -42,11 +43,11 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(requireActivity(), R.id.main_container)
         viewModel.liveData.observe(viewLifecycleOwner) { renderData(it) }
-        viewModel.getListPokemon()
-        initAdapter()
+        initViews()
     }
 
-    private fun initAdapter() {
+    private fun initViews() {
+        binding?.fab?.setOnClickListener { viewModel.randomStart() }
         binding?.recyclerView?.adapter = adapter.withLoadStateHeaderAndFooter(
             header = LoadingStateAdapter(adapter),
             footer = LoadingStateAdapter(adapter)
@@ -57,10 +58,12 @@ class HomeFragment : Fragment() {
         when (appState) {
             is AppState.Success -> updateList(appState.pokemonDTOList)
             is AppState.Error -> setErrorState(appState.errorState)
+            is AppState.Loading -> setLoadingState()
         }
     }
 
     private fun setErrorState(errorState: ErrorState) {
+        setNormalState()
         when (errorState) {
             is ErrorState.TimOut -> toast(R.string.timeout_error_message)
             is ErrorState.UnknownHost -> toast(R.string.unknown_host_error_message)
@@ -70,8 +73,24 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun updateList(pokemonDTOList: PagingData<PokemonDTO>): Unit =
+    private fun updateList(pokemonDTOList: PagingData<PokemonDTO>) {
         adapter.submitData(lifecycle, pokemonDTOList)
+        setNormalState()
+    }
+
+    private fun setLoadingState() {
+        binding?.apply {
+            progressBar.isVisible = true
+            recyclerView.isVisible = false
+        }
+    }
+
+    private fun setNormalState() {
+        binding?.apply {
+            progressBar.isVisible = false
+            recyclerView.isVisible = true
+        }
+    }
 
     override fun onDestroyView() {
         binding = null

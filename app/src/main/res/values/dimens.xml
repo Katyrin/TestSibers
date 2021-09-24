@@ -3,6 +3,7 @@
 
     <dimen name="stroke_height">1dp</dimen>
     <dimen name="margin_normal">8dp</dimen>
+    <dimen name="margin_max">16dp</dimen>
     <dimen name="size_preview_image">60dp</dimen>
 
     <dimen name="text_size_normal">24sp</dimen>
