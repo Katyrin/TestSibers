@@ -13,6 +13,7 @@ import com.katyrin.testsibers.databinding.FragmentHomeBinding
 import com.katyrin.testsibers.model.entities.PokemonDTO
 import com.katyrin.testsibers.utils.toast
 import com.katyrin.testsibers.view.adapter.HomeAdapter
+import com.katyrin.testsibers.view.adapter.LoadingStateAdapter
 import com.katyrin.testsibers.viewmodel.AppState
 import com.katyrin.testsibers.viewmodel.ErrorState
 import com.katyrin.testsibers.viewmodel.HomeViewModel
@@ -23,6 +24,12 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModel()
     private var binding: FragmentHomeBinding? = null
     private var navController: NavController? = null
+    private val adapter by lazy(LazyThreadSafetyMode.NONE) {
+        HomeAdapter { pokemonDTO ->
+            val navDirections = HomeFragmentDirections.actionHomeFragmentToInfoFragment(pokemonDTO)
+            navController?.navigate(navDirections)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,11 +47,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        binding?.recyclerView?.adapter = HomeAdapter { pokemonDTO ->
-            navController?.navigate(
-                HomeFragmentDirections.actionHomeFragmentToInfoFragment(pokemonDTO)
-            )
-        }
+        binding?.recyclerView?.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = LoadingStateAdapter(adapter),
+            footer = LoadingStateAdapter(adapter)
+        )
     }
 
     private fun renderData(appState: AppState) {
@@ -65,7 +71,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateList(pokemonDTOList: PagingData<PokemonDTO>): Unit =
-        (binding?.recyclerView?.adapter as HomeAdapter).submitData(lifecycle, pokemonDTOList)
+        adapter.submitData(lifecycle, pokemonDTOList)
 
     override fun onDestroyView() {
         binding = null
