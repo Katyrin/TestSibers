@@ -2,6 +2,7 @@ package com.katyrin.testsibers
 
 import android.app.Application
 import com.katyrin.testsibers.di.application
+import com.katyrin.testsibers.di.database
 import com.katyrin.testsibers.di.homeModule
 import com.katyrin.testsibers.di.network
 import org.koin.android.ext.koin.androidContext
@@ -13,7 +14,7 @@ class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(applicationContext)
-            modules(listOf(application, homeModule, network))
+            modules(listOf(application, homeModule, network, database))
         }
     }
 }

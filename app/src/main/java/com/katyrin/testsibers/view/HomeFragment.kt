@@ -4,12 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.paging.PagingData
 import com.katyrin.testsibers.R
+import com.katyrin.testsibers.bus.Event
+import com.katyrin.testsibers.bus.EventBus
 import com.katyrin.testsibers.databinding.FragmentHomeBinding
 import com.katyrin.testsibers.model.entities.PokemonDTO
 import com.katyrin.testsibers.utils.toast
@@ -18,6 +22,8 @@ import com.katyrin.testsibers.view.adapter.LoadingStateAdapter
 import com.katyrin.testsibers.viewmodel.AppState
 import com.katyrin.testsibers.viewmodel.ErrorState
 import com.katyrin.testsibers.viewmodel.HomeViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : Fragment() {
@@ -44,9 +50,11 @@ class HomeFragment : Fragment() {
         navController = Navigation.findNavController(requireActivity(), R.id.main_container)
         viewModel.liveData.observe(viewLifecycleOwner) { renderData(it) }
         initViews()
+        observeBus()
     }
 
     private fun initViews() {
+        (requireActivity() as AppCompatActivity).setSupportActionBar(binding?.toolBar)
         binding?.fab?.setOnClickListener { viewModel.randomStart() }
         binding?.recyclerView?.adapter = adapter.withLoadStateHeaderAndFooter(
             header = LoadingStateAdapter(adapter),
@@ -89,6 +97,24 @@ class HomeFragment : Fragment() {
         binding?.apply {
             progressBar.isVisible = false
             recyclerView.isVisible = true
+        }
+    }
+
+    private fun observeBus() {
+        lifecycleScope.launch {
+            EventBus.events.collectLatest { event ->
+                when (event) {
+                    is Event.Attack -> {
+                        toast("attack_check ${event.isChecked}")
+                    }
+                    is Event.Defense -> {
+                        toast("defense_check ${event.isChecked}")
+                    }
+                    is Event.HP -> {
+                        toast("hp_check ${event.isChecked}")
+                    }
+                }
+            }
         }
     }
 

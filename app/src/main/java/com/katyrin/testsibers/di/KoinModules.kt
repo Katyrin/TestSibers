@@ -1,6 +1,8 @@
 package com.katyrin.testsibers.di
 
 import androidx.paging.PagingSource
+import com.katyrin.testsibers.model.datasource.LocalDataSource
+import com.katyrin.testsibers.model.datasource.LocalDataSourceImpl
 import com.katyrin.testsibers.model.datasource.RemoteDataSource
 import com.katyrin.testsibers.model.datasource.RemoteDataSourceImpl
 import com.katyrin.testsibers.model.entities.PokemonDTO
@@ -15,7 +17,8 @@ import org.koin.dsl.module
 val application = module {
     single<PokemonMapping> { PokemonMappingImpl() }
     single<RemoteDataSource> { RemoteDataSourceImpl(apiService = get(), pokemonMapping = get()) }
-    single<Repository> { RepositoryImpl(remoteDataSource = get()) }
+    single<LocalDataSource> { LocalDataSourceImpl(pokemonDAO = get(), pokemonMapping = get()) }
+    single<Repository> { RepositoryImpl(remoteDataSource = get(), localDataSource = get()) }
     factory<PagingSource<Int, PokemonDTO>> { PokemonPagingSource(repository = get()) }
 }
 

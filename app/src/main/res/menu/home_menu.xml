@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/attack_check"
+            android:checkable="true"
+            android:title="@string/attack"
+            android:titleCondensed="Options" />
+        <item
+            android:id="@+id/defense_check"
+            android:checkable="true"
+            android:title="@string/defense"
+            android:titleCondensed="Persist" />
+        <item
+            android:id="@+id/hp_check"
+            android:checkable="true"
+            android:title="@string/hp"
+            android:titleCondensed="Persist" />
+    </group>
+</menu>

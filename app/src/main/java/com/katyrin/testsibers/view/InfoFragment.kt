@@ -34,7 +34,7 @@ class InfoFragment : Fragment() {
             weightValue.text = pokemonDTO?.weight.toString()
             typeValue.text = pokemonDTO?.types.toString()
             attackValue.text = pokemonDTO?.attack.toString()
-            defenseValue.text = pokemonDTO?.defence.toString()
+            defenseValue.text = pokemonDTO?.defense.toString()
             hpValue.text = pokemonDTO?.hp.toString()
         }
     }

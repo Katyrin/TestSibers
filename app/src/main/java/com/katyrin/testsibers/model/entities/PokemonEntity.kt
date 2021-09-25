@@ -1,10 +1,11 @@
 package com.katyrin.testsibers.model.entities
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
-@Parcelize
-data class PokemonDTO(
+@Entity(indices = [Index(value = ["name"], unique = true)])
+data class PokemonEntity(
     val name: String,
     val height: Int,
     val weight: Int,
@@ -13,5 +14,6 @@ data class PokemonDTO(
     val defense: Int,
     val hp: Int,
     val imageUrl: String? = "",
+    @PrimaryKey
     val id: Int
-) : Parcelable
+)
