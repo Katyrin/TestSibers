@@ -1,4 +1,4 @@
-package com.katyrin.testsibers.model.storage
+package com.katyrin.testsibers.model.storage.room
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

@@ -5,7 +5,7 @@ import com.katyrin.testsibers.model.entities.PokemonDTO
 import com.katyrin.testsibers.model.entities.PokemonEntity
 import com.katyrin.testsibers.model.entities.pokemonDTO.NamedApiResource
 import com.katyrin.testsibers.model.mapping.PokemonMapping
-import com.katyrin.testsibers.model.storage.PokemonDAO
+import com.katyrin.testsibers.model.storage.room.PokemonDAO
 
 class LocalDataSourceImpl(
     private val pokemonDAO: PokemonDAO,

@@ -13,7 +13,9 @@ object EventBus {
     private val mutableEvent = MutableSharedFlow<Event>()
     val events = mutableEvent.asSharedFlow()
 
-    fun invokeEvent(event: Event) {
-        scope.launch { mutableEvent.emit(event) }
+    fun invokeEvent() {
+        scope.launch { mutableEvent.emit(Event) }
     }
+
+    object Event
 }

@@ -1,5 +1,6 @@
 package com.katyrin.testsibers.view.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -28,6 +29,8 @@ class HomeAdapter(
             itemBinding.nameTextView.text = pokemonDTO.name
             itemBinding.previewImage.loadPokemonImage(pokemonDTO.imageUrl)
             itemBinding.root.setOnClickListener { onClick(pokemonDTO) }
+            if (pokemonDTO.isFirst) itemBinding.root.setBackgroundColor(Color.BLUE)
+            else itemBinding.root.setBackgroundColor(Color.WHITE)
         }
     }
 

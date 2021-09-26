@@ -10,12 +10,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import com.katyrin.testsibers.R
-import com.katyrin.testsibers.bus.Event
 import com.katyrin.testsibers.bus.EventBus
 import com.katyrin.testsibers.databinding.FragmentHomeBinding
 import com.katyrin.testsibers.model.entities.PokemonDTO
+import com.katyrin.testsibers.utils.FIRST_ITEM
 import com.katyrin.testsibers.utils.toast
 import com.katyrin.testsibers.view.adapter.HomeAdapter
 import com.katyrin.testsibers.view.adapter.LoadingStateAdapter
@@ -28,10 +29,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : Fragment() {
 
+    private var isChecked: Boolean = false
     private val viewModel: HomeViewModel by viewModel()
     private var binding: FragmentHomeBinding? = null
     private var navController: NavController? = null
-    private val adapter by lazy(LazyThreadSafetyMode.NONE) {
+    private val adapter by lazy {
         HomeAdapter { pokemonDTO ->
             val navDirections = HomeFragmentDirections.actionHomeFragmentToInfoFragment(pokemonDTO)
             navController?.navigate(navDirections)
@@ -54,24 +56,28 @@ class HomeFragment : Fragment() {
     }
 
     private fun initViews() {
-        (requireActivity() as AppCompatActivity).setSupportActionBar(binding?.toolBar)
-        binding?.fab?.setOnClickListener { viewModel.randomStart() }
-        binding?.recyclerView?.adapter = adapter.withLoadStateHeaderAndFooter(
-            header = LoadingStateAdapter(adapter),
-            footer = LoadingStateAdapter(adapter)
-        )
+        binding?.apply {
+            (requireActivity() as AppCompatActivity).setSupportActionBar(toolBar)
+            fab.setOnClickListener { viewModel.randomStart() }
+            recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+                header = LoadingStateAdapter(adapter),
+                footer = LoadingStateAdapter(adapter)
+            )
+            adapter.addLoadStateListener { state ->
+                progressBar.isVisible = state.refresh == LoadState.Loading
+                recyclerView.isVisible = state.refresh != LoadState.Loading
+            }
+        }
     }
 
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> updateList(appState.pokemonDTOList)
             is AppState.Error -> setErrorState(appState.errorState)
-            is AppState.Loading -> setLoadingState()
         }
     }
 
     private fun setErrorState(errorState: ErrorState) {
-        setNormalState()
         when (errorState) {
             is ErrorState.TimOut -> toast(R.string.timeout_error_message)
             is ErrorState.UnknownHost -> toast(R.string.unknown_host_error_message)
@@ -83,37 +89,15 @@ class HomeFragment : Fragment() {
 
     private fun updateList(pokemonDTOList: PagingData<PokemonDTO>) {
         adapter.submitData(lifecycle, pokemonDTOList)
-        setNormalState()
-    }
-
-    private fun setLoadingState() {
-        binding?.apply {
-            progressBar.isVisible = true
-            recyclerView.isVisible = false
-        }
-    }
-
-    private fun setNormalState() {
-        binding?.apply {
-            progressBar.isVisible = false
-            recyclerView.isVisible = true
-        }
+        if (isChecked) binding?.recyclerView?.scrollToPosition(FIRST_ITEM)
+        isChecked = false
     }
 
     private fun observeBus() {
         lifecycleScope.launch {
-            EventBus.events.collectLatest { event ->
-                when (event) {
-                    is Event.Attack -> {
-                        toast("attack_check ${event.isChecked}")
-                    }
-                    is Event.Defense -> {
-                        toast("defense_check ${event.isChecked}")
-                    }
-                    is Event.HP -> {
-                        toast("hp_check ${event.isChecked}")
-                    }
-                }
+            EventBus.events.collectLatest {
+                viewModel.getListPokemon()
+                isChecked = true
             }
         }
     }

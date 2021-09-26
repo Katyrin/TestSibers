@@ -13,5 +13,6 @@ data class PokemonDTO(
     val defense: Int,
     val hp: Int,
     val imageUrl: String? = "",
-    val id: Int
+    val id: Int,
+    var isFirst: Boolean = false
 ) : Parcelable
