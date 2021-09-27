@@ -93,6 +93,7 @@ class HomeFragment : Fragment() {
         isChecked = false
     }
 
+    // Reaction to filter selection
     private fun observeBus() {
         lifecycleScope.launch {
             EventBus.events.collectLatest {

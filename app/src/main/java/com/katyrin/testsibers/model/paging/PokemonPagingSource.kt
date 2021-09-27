@@ -40,6 +40,7 @@ class PokemonPagingSource(private val repository: Repository) : PagingSource<Int
         isRandom = false
     }
 
+    // Request to get a list of Pokemon, taking into account the shift from the starting position
     private suspend fun getPagingDTO(nextPage: Int): PagingDTO =
         if (0 <= nextPage) {
             val offset = nextPage * PAGE_SIZE + (pokemonPosition % PAGE_SIZE)

@@ -20,6 +20,8 @@ class RepositoryImpl(
         if (networkState.isOnline() && !storage.isChecked()) getRemoteData(offset, limit)
         else getLocalData()
 
+    //Obtaining available pokemon from the database.
+    // If the pokemon is not in the database then download it from a remote source
     private suspend fun getRemoteData(offset: Int, limit: Int): PagingDTO =
         with(remoteDataSource.getListPokemon(offset, limit)) {
             val cashData: CashData = localDataSource.getCashData(results)
@@ -32,8 +34,9 @@ class RepositoryImpl(
             PagingDTO(next, previous, cashList)
         }
 
+    // Getting a list of Pokemon based on the selected sorting
     private suspend fun getLocalData(): PagingDTO =
-        with(localDataSource.getPokemonAttackList().toMutableList()) {
+        with(localDataSource.getPokemonList().toMutableList()) {
             if (storage.getAttackIsCheck()) sortByDescending { it.attack }
             if (storage.getDefenseIsCheck()) sortByDescending { it.defense }
             if (storage.getHPIsCheck()) sortByDescending { it.hp }

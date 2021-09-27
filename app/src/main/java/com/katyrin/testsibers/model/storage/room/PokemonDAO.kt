@@ -12,15 +12,6 @@ interface PokemonDAO {
     @Query("SELECT * FROM PokemonEntity ORDER BY id")
     suspend fun getPokemonList(): List<PokemonEntity>
 
-    @Query("SELECT * FROM PokemonEntity ORDER BY attack")
-    suspend fun getPokemonAttackList(): List<PokemonEntity>
-
-    @Query("SELECT * FROM PokemonEntity ORDER BY defense")
-    suspend fun getPokemonDefenseList(): List<PokemonEntity>
-
-    @Query("SELECT * FROM PokemonEntity ORDER BY hp")
-    suspend fun getPokemonHPList(): List<PokemonEntity>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun putPokemonList(pokemonEntity: PokemonEntity)
 

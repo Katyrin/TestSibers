@@ -15,15 +15,6 @@ class LocalDataSourceImpl(
     override suspend fun getPokemonList(): List<PokemonDTO> =
         pokemonMapping.mapEntityListToDTOList(pokemonDAO.getPokemonList())
 
-    override suspend fun getPokemonAttackList(): List<PokemonDTO> =
-        pokemonMapping.mapEntityListToDTOList(pokemonDAO.getPokemonAttackList())
-
-    override suspend fun getPokemonDefenseList(): List<PokemonDTO> =
-        pokemonMapping.mapEntityListToDTOList(pokemonDAO.getPokemonDefenseList())
-
-    override suspend fun getPokemonHPList(): List<PokemonDTO> =
-        pokemonMapping.mapEntityListToDTOList(pokemonDAO.getPokemonHPList())
-
     override suspend fun putPokemonList(pokemonDTO: PokemonDTO) {
         pokemonDAO.putPokemonList(pokemonMapping.mapDTOToEntity(pokemonDTO))
     }
